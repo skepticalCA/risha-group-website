@@ -19,6 +19,7 @@ revealItems.forEach((item, index) => {
 });
 
 const updateScrollProgress = () => {
+  if (!progressBar) return;
   const scrollable = document.documentElement.scrollHeight - window.innerHeight;
   const progress = scrollable > 0 ? window.scrollY / scrollable : 0;
   progressBar.style.transform = `scaleX(${Math.min(Math.max(progress, 0), 1)})`;
@@ -113,27 +114,29 @@ const form = document.querySelector("#partnerForm");
 const formError = document.querySelector("#formError");
 const formSuccess = document.querySelector("#formSuccess");
 
-form.addEventListener("submit", (event) => {
-  event.preventDefault();
-  formError.textContent = "";
-  formSuccess.textContent = "";
+if (form) {
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    formError.textContent = "";
+    formSuccess.textContent = "";
 
-  const data = new FormData(form);
-  const requiredFields = ["name", "email", "interest", "message"];
-  const missingField = requiredFields.find((field) => !String(data.get(field) || "").trim());
+    const data = new FormData(form);
+    const requiredFields = ["name", "email", "interest", "message"];
+    const missingField = requiredFields.find((field) => !String(data.get(field) || "").trim());
 
-  if (missingField) {
-    formError.textContent = "Please complete every field before sending your note.";
-    return;
-  }
+    if (missingField) {
+      formError.textContent = "Please complete every field before sending your note.";
+      return;
+    }
 
-  const email = String(data.get("email"));
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    formError.textContent = "Enter a valid email address so the Risha team can respond.";
-    return;
-  }
+    const email = String(data.get("email"));
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      formError.textContent = "Enter a valid email address so the Risha team can respond.";
+      return;
+    }
 
-  form.reset();
-  formSuccess.textContent =
-    "Thank you. Your partnership note is ready for routing when connected to a backend.";
-});
+    form.reset();
+    formSuccess.textContent =
+      "Thank you. Your partnership note is ready for routing when connected to a backend.";
+  });
+}
